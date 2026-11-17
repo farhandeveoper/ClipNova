@@ -19,13 +19,16 @@ LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").strip().lower()
 LOCAL_WHISPER_MODEL = os.getenv("LOCAL_WHISPER_MODEL", "tiny")
 LOCAL_WHISPER_DEVICE = os.getenv("LOCAL_WHISPER_DEVICE", "auto")  # auto / cpu / cuda
 LOCAL_OUTPUT_DIR = os.getenv("LOCAL_OUTPUT_DIR", "output")
+# Optional yt-dlp browser cookie source for age/region-restricted videos.
+# Keep disabled unless the operator explicitly selects a signed-in browser.
+YTDLP_COOKIES_FROM_BROWSER = os.getenv("YTDLP_COOKIES_FROM_BROWSER", "").strip()
 
 # VAD (Voice Activity Detection) settings for faster-whisper
 # Default threshold is 0.5; lower = more sensitive, higher = less sensitive
 # Default min_speech_duration_ms is 250ms; increase to avoid tiny false positives
 # Default min_silence_duration_ms is 2000ms; increase to avoid splitting mid-sentence
 # DISABLED by default because VAD is too aggressive on mixed speech/music content
-LOCAL_WHISPER_VAD_FILTER = os.getenv("LOCAL_WHISPER_VAD_FILTER", "false").strip().lower() == "true"
+LOCAL_WHISPER_VAD_FILTER = os.getenv("LOCAL_WHISPER_VAD_FILTER", "true").strip().lower() == "true"
 _vad_params_env = os.getenv("LOCAL_WHISPER_VAD_PARAMETERS", "")
 if _vad_params_env:
     import json

@@ -13,10 +13,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-function queueJob(res, source, clipCount = 10, id = randomUUID()) {
+function queueJob(res, source, clipCount = 5, id = randomUUID()) {
   const job = { id, status: "queued", stage: "Queued", progress: 0, clips: [], createdAt: Date.now() };
   jobs.set(id, job);
-  runPipeline(job, source, Math.min(15, Math.max(1, Number(clipCount) || 10))).catch((error) => {
+  runPipeline(job, source, Math.min(15, Math.max(1, Number(clipCount) || 5))).catch((error) => {
     console.error(`Job ${id} failed unexpectedly:`, error);
     Object.assign(job, { status: "error", error: error.message || "The job failed unexpectedly." });
   });
@@ -24,7 +24,7 @@ function queueJob(res, source, clipCount = 10, id = randomUUID()) {
 }
 
 app.post("/api/jobs", (req, res) => {
-  const { url, clipCount = 10 } = req.body || {};
+  const { url, clipCount = 5 } = req.body || {};
   if (!/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//.test(url || ""))
     return res.status(400).json({ error: "Please paste a valid YouTube link." });
   queueJob(res, url, clipCount);
@@ -54,7 +54,7 @@ app.post("/api/jobs/upload", async (req, res, next) => {
   try {
     await streamPipeline(req, sizeGuard, fs.createWriteStream(filePath, { flags: "wx" }));
     if (!bytes) throw new Error("The uploaded video is empty.");
-    queueJob(res, filePath, req.get("x-clip-count") || 10, id);
+    queueJob(res, filePath, req.get("x-clip-count") || 5, id);
   } catch (error) {
     fs.rmSync(dir, { recursive: true, force: true });
     if (!res.headersSent) {

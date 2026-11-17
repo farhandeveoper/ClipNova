@@ -85,10 +85,10 @@ def _resolve_device() -> str:
     if LOCAL_WHISPER_DEVICE != "auto":
         return LOCAL_WHISPER_DEVICE
     try:
-        import torch  # type: ignore
-        if torch.cuda.is_available():
-            # Test that CUDA actually works (catches missing cuBLAS/cuDNN libs)
-            torch.zeros(1, device="cuda")
+        # faster-whisper uses CTranslate2 directly; PyTorch is optional and
+        # may not be installed even when CTranslate2 has CUDA support.
+        import ctranslate2  # type: ignore
+        if ctranslate2.get_cuda_device_count() > 0:
             return "cuda"
     except (ImportError, OSError, RuntimeError):
         pass
@@ -130,7 +130,16 @@ def transcribe_local(media_path: str, language: Optional[str] = None) -> Dict:
 
     from ..config import LOCAL_WHISPER_VAD_FILTER, LOCAL_WHISPER_VAD_PARAMETERS
 
-    model = WhisperModel(LOCAL_WHISPER_MODEL, device=device, compute_type=compute_type)
+    try:
+        model = WhisperModel(LOCAL_WHISPER_MODEL, device=device, compute_type=compute_type)
+    except (OSError, RuntimeError) as error:
+        if device != "cuda" or LOCAL_WHISPER_DEVICE != "auto":
+            raise
+        # A detected GPU can still lack a compatible CUDA runtime. Keep the
+        # job usable in that case and make the fallback visible in the log.
+        print(f"[transcribe/local] CUDA startup failed ({error}); falling back to CPU", flush=True)
+        device = "cpu"
+        model = WhisperModel(LOCAL_WHISPER_MODEL, device=device, compute_type="int8")
 
     transcribe_kwargs = {
         "audio": media_path,

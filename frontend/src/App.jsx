@@ -49,7 +49,7 @@ function Results({ job, onReset }) {
 export default function App() {
   const [url, setUrl] = useState("");
   const [video, setVideo] = useState(null);
-  const count = 10;
+  const count = 5;
   const [job, setJob] = useState(null);
   const [error, setError] = useState("");
 

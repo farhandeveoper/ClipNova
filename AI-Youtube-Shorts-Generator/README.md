@@ -103,7 +103,14 @@ Don't want to self-host? The [AI Clipping API](https://muapi.ai/playground/ai-cl
    LOCAL_WHISPER_MODEL=base          # tiny / base / small / medium / large-v3
    LOCAL_WHISPER_DEVICE=auto         # auto / cpu / cuda
    LOCAL_OUTPUT_DIR=output           # where local mp4s land
+   # Optional, for age-restricted videos when signed in to YouTube in Chrome:
+   # YTDLP_COOKIES_FROM_BROWSER=chrome
    ```
+
+For videos that require age confirmation, sign in to YouTube in the selected
+browser, set `YTDLP_COOKIES_FROM_BROWSER` to `chrome`, `edge`, or `firefox` in
+`.env`, and restart the backend. Cookie access stays disabled unless you set
+this option. You can also upload the video file instead.
 
 ## Usage
 

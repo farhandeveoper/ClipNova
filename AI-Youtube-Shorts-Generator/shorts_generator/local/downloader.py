@@ -9,7 +9,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 from typing import Optional
 
-from ..config import LOCAL_OUTPUT_DIR
+from ..config import LOCAL_OUTPUT_DIR, YTDLP_COOKIES_FROM_BROWSER
 
 
 def _import_ytdlp():
@@ -119,17 +119,31 @@ def download_youtube_local(video_url: str, fmt: str = "720", out_dir: Optional[s
         "no_warnings": True,
         "noprogress": True,
     }
+    if YTDLP_COOKIES_FROM_BROWSER:
+        browser, separator, profile = YTDLP_COOKIES_FROM_BROWSER.partition(":")
+        ydl_opts["cookiesfrombrowser"] = (browser.strip(), profile.strip() or None if separator else None, None, None)
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(video_url, download=True)
-        path = ydl.prepare_filename(info)
-        # merge_output_format may rename the extension after merge
-        if not os.path.exists(path):
-            stem, _ = os.path.splitext(path)
-            for ext in (".mp4", ".mkv", ".webm"):
-                if os.path.exists(stem + ext):
-                    path = stem + ext
-                    break
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(video_url, download=True)
+            path = ydl.prepare_filename(info)
+            # merge_output_format may rename the extension after merge
+            if not os.path.exists(path):
+                stem, _ = os.path.splitext(path)
+                for ext in (".mp4", ".mkv", ".webm"):
+                    if os.path.exists(stem + ext):
+                        path = stem + ext
+                        break
+    except Exception as error:
+        message = str(error)
+        if any(term in message.lower() for term in ("sign in to confirm your age", "age-restricted", "confirm you’re not a bot", "confirm you're not a bot")) and not YTDLP_COOKIES_FROM_BROWSER:
+            raise RuntimeError(
+                f"{message}\n\nThis video requires a signed-in YouTube session. "
+                "Set YTDLP_COOKIES_FROM_BROWSER=chrome (or edge/firefox) in "
+                "AI-Youtube-Shorts-Generator/.env, sign in to YouTube in that browser, "
+                "and restart ClipNova."
+            ) from error
+        raise
 
     print(f"[download/local] ready: {path}", flush=True)
     return path
