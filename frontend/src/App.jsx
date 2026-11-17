@@ -32,6 +32,7 @@ function Results({ job, onReset }) {
           <button className="btn ghost" onClick={onReset}>Make new clips</button>
         </div>
       </div>
+      <p className="muted">Your clips stay available here until you choose “Make new clips.” Returning to the start page deletes them from the server.</p>
       <div className="grid">
         {job.clips.map((c) => (
           <article className="card" key={c.file}>
@@ -76,7 +77,21 @@ export default function App() {
     return () => clearInterval(t);
   }, [job?.id, job?.status]);
 
-  const reset = () => { setJob(null); setUrl(""); setVideo(null); };
+  const reset = async () => {
+    let cleanupFailed = false;
+    if (job?.id) {
+      try {
+        const response = await fetch(`${API}/jobs/${job.id}`, { method: "DELETE" });
+        cleanupFailed = !response.ok && response.status !== 404;
+      } catch {
+        cleanupFailed = true;
+      }
+    }
+    setJob(null);
+    setUrl("");
+    setVideo(null);
+    setError(cleanupFailed ? "Could not delete this job's files from the server. Please try again." : "");
+  };
 
   return (
     <main>

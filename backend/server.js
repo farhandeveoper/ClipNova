@@ -75,6 +75,18 @@ app.get("/api/jobs/:id", (req, res) => {
   j ? res.json(j) : res.status(404).json({ error: "Job not found or expired." });
 });
 
+app.delete("/api/jobs/:id", (req, res) => {
+  const job = jobs.get(req.params.id);
+  if (!job) return res.sendStatus(404);
+  if (!["done", "error"].includes(job.status)) {
+    return res.status(409).json({ error: "Wait for processing to finish before deleting this job." });
+  }
+
+  fs.rmSync(path.join(JOBS_DIR, req.params.id), { recursive: true, force: true });
+  jobs.delete(req.params.id);
+  res.sendStatus(204);
+});
+
 app.get("/api/jobs/:id/clips/:file", (req, res) => {
   if (!jobs.has(req.params.id)) return res.sendStatus(404);
   const file = path.join(JOBS_DIR, req.params.id, path.basename(req.params.file));
