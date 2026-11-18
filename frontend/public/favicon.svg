@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="nova" x1="10" y1="8" x2="53" y2="57" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#71FFAE"/>
+      <stop offset="1" stop-color="#18C964"/>
+    </linearGradient>
+    <filter id="glow" x="5" y="3" width="54" height="58" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="#080D0A"/>
+  <path d="M17 23v-5a3 3 0 0 1 3-3h5m17 0h5a3 3 0 0 1 3 3v5M50 41v5a3 3 0 0 1-3 3h-5m-17 0h-5a3 3 0 0 1-3-3v-5" stroke="url(#nova)" stroke-linecap="round" stroke-width="4"/>
+  <path d="m28 23 14 9-14 9V23Z" fill="url(#nova)" filter="url(#glow)" opacity=".55"/>
+  <path d="m28 23 14 9-14 9V23Z" fill="url(#nova)"/>
+  <path d="m48 10 1.7 4.3L54 16l-4.3 1.7L48 22l-1.7-4.3L42 16l4.3-1.7L48 10Z" fill="#B8FFD2"/>
+</svg>

@@ -1,0 +1,30 @@
+/* Hero pill highlight */
+.hero-em {
+  font-style: normal;
+  color: #000;
+  background: #22d36b;
+  padding: 0 .22em;
+  border-radius: .28em;
+  white-space: nowrap;
+}
+.hero-form {
+  display: flex;
+  gap: 10px;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 8px;
+  background: #0d0d0d;
+  border: 1px solid #242424;
+  border-radius: 999px;
+  transition: border-color .2s;
+}
+.hero-form:focus-within { border-color: #22d36b; }
+.hero-form input { flex: 1; min-width: 0; background: transparent; border: 0; color: #fff; font: inherit; padding: 12px 16px; }
+.hero-form input:focus { outline: 0; }
+.hero-form select { background: transparent; border: 0; border-left: 1px solid #242424; color: #fff; font: inherit; padding: 12px 16px; cursor: pointer; }
+.hero-form select:focus { outline: 0; }
+.hero-form select option { background: #111; }
+@media (max-width: 620px) {
+  .hero-form { flex-direction: column; border-radius: 24px; }
+  .hero-form select { border: 0; border-top: 1px solid #242424; }
+}

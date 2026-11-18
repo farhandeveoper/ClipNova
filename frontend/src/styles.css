@@ -1,38 +1,47 @@
-:root{--bg:#15123a;--panel:#1f1b52;--ink:#f1eeff;--muted:#a9a3d6;--hot:#ff4d6d;--cyan:#5ce1e6;--gold:#ffd700}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(1000px 500px at 80% -10%,#3a2a8f55,transparent),var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif}
-main{max-width:1080px;margin:0 auto;padding:24px 20px 80px}
-h1,h2,.logo{font-family:"Bricolage Grotesque",sans-serif}
-h1{font-size:clamp(2.6rem,8vw,5.2rem);line-height:1;margin:48px 0 16px;font-weight:800;letter-spacing:-.03em}
-.logo{font-size:1.5rem}.logo span{color:var(--hot)}
-.muted{color:var(--muted);max-width:56ch;line-height:1.6}
-.hero{display:flex;flex-direction:column;align-items:flex-start}
-/* hero animation: long track splits into vertical clips */
-.timeline{width:100%;margin:28px 0 8px}
-.track{position:relative;height:18px;border-radius:9px;background:linear-gradient(90deg,var(--cyan),var(--hot));animation:cut 1.2s ease-out 1s forwards;overflow:hidden}
-.playhead{position:absolute;top:0;bottom:0;width:4px;background:#fff;animation:scan 1.2s ease-in-out forwards}
-.clips{display:flex;gap:14px;margin-top:14px}
-.clips i{width:54px;height:96px;border-radius:10px;background:linear-gradient(160deg,var(--cyan),var(--hot));opacity:0;transform:translateY(-30px) scale(.6);animation:pop .5s cubic-bezier(.2,1.4,.4,1) forwards}
-.clips i::after{content:"";display:block;margin:70px auto 0;width:60%;height:6px;border-radius:3px;background:var(--gold)}
-@keyframes scan{from{left:0}to{left:100%}}
-@keyframes cut{to{opacity:.25;height:6px}}
-@keyframes pop{to{opacity:1;transform:none}}
-.form{display:flex;gap:10px;width:100%;margin-top:24px;flex-wrap:wrap}
-input,select{background:var(--panel);border:2px solid #3b3590;color:var(--ink);border-radius:14px;padding:16px 18px;font:inherit;font-size:1rem}
-input{flex:1;min-width:240px}
-.upload{display:flex;align-items:center;gap:10px;padding:12px 16px;border:2px dashed #3b3590;border-radius:14px;color:var(--muted);cursor:pointer}.upload input{display:none}.file-name{align-self:center}
-input:focus,select:focus,.btn:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
-.btn{background:var(--hot);color:#fff;border:0;border-radius:14px;padding:16px 26px;font:700 1rem "DM Sans";cursor:pointer;text-decoration:none;display:inline-block;transition:transform .15s}
-.btn:hover{transform:translateY(-2px)}.btn.small{padding:8px 14px;font-size:.9rem}.btn.ghost{background:transparent;border:2px solid #3b3590}
-.error{color:#ff8fa3}
-.panel{background:var(--panel);border-radius:24px;padding:48px 24px;margin-top:40px}.center{text-align:center}.center .muted{margin:0 auto}
-.spinner{width:56px;height:56px;margin:0 auto 20px;border-radius:50%;border:5px solid #3b3590;border-top-color:var(--hot);animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.bar{height:12px;border-radius:6px;background:#15123a;max-width:520px;margin:20px auto;overflow:hidden}
-.bar div{height:100%;background:linear-gradient(90deg,var(--cyan),var(--hot));transition:width .8s}
-.row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}.gap{gap:10px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;margin-top:20px}
-.card{background:var(--panel);border-radius:18px;padding:12px;transition:transform .2s}.card:hover{transform:translateY(-4px)}
-.card video{width:100%;aspect-ratio:9/16;border-radius:12px;background:#000;object-fit:contain}
-.title{font-size:.9rem;line-height:1.4;min-height:2.6em}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { background: #000; color: #fff; font-family: "DM Sans", sans-serif; line-height: 1.55; margin: 0; }
+  h1,h2,h3 { font-family: "Bricolage Grotesque", sans-serif; letter-spacing: -.025em; margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  * { box-sizing: border-box; }
+}
+
+/* ── Keyframes ── */
+@keyframes up { from { opacity: 0; transform: translateY(30px); } }
+@keyframes slide { to { transform: translateX(-50%); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Scroll reveal ── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s, transform .7s; }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ── Marquee ── */
+.marquee-track { display: flex; gap: 64px; width: max-content; animation: slide 28s linear infinite; }
+
+/* ── Hero animation ── */
+.hero-anim { animation: up .8s ease both; }
+
+/* ── Progress bar fill ── */
+.bar-fill { height: 100%; background: #22d36b; transition: width .8s; }
+
+/* ── Spinner ── */
+.spinner {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 5px solid #262626;
+  border-top-color: #22d36b;
+  animation: spin 1s linear infinite;
+}
+
+/* ── FAQ marker ── */
+summary::-webkit-details-marker { display: none; }
+summary { list-style: none; }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, .reveal { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; }
+}

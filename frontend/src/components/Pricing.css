@@ -1,0 +1,3 @@
+.plan-list { list-style: none; padding: 0; margin: 20px 0 28px; flex: 1; }
+.plan-list li { padding: 7px 0 7px 28px; position: relative; }
+.plan-list li::before { content: "✓"; position: absolute; left: 0; color: #22d36b; font-weight: 700; }
